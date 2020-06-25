@@ -1,12 +1,16 @@
 @echo off
 
+REM Please edit SERVER, COUNTER and INTERVALINSEC (interval/pause in seconds)
+REM e.g. COUNTER 10 and INTERVALINSEC 20 => Each 20 seconds a ping and the script will end after 10 rounds...
 set SERVER=8.8.8.8
-set COUNTER=60
+set COUNTER=10
+set INTERVALINSEC=10
+
 
 set APPL=pingtime
 set LOG=%APPL%-%SERVER%.log
 
-echo Start %APPL% - DATE: %DATE% - TIME: %TIME:~0,8% > %LOG%
+echo Start %APPL% - DATE: %DATE% - TIME: %TIME:~0,8% - SERVER: %SERVER% - C-I: %COUNTER%-%INTERVALINSEC%> %LOG%
 echo %APPL% is running... Please, don't cancel this job!
 
 for /l %%x in (1, 1, %COUNTER%) do (
@@ -18,7 +22,7 @@ for /l %%x in (1, 1, %COUNTER%) do (
 	) else (
 		call :ONLINEMESSAGE
 	)
-	timeout 1 > NUL
+	timeout %INTERVALINSEC% > NUL
 ) 
 
 echo End %APPL% --- DATE: %DATE% - TIME: %TIME:~0,8% >> %LOG%
@@ -27,9 +31,11 @@ goto END
 
 :OFFLINEMESSAGE
 echo DESTINATION %SERVER% UNREACHABLE - %DATE% %TIME:~0,8% >> %LOG%
+echo DESTINATION %SERVER% UNREACHABLE - %DATE% %TIME:~0,8%
 goto :eof
 
 :ONLINEMESSAGE
+echo OK %TIME:~0,8% >> %LOG%
 echo OK %TIME:~0,8%
 goto :eof
 
